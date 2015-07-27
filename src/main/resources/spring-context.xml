@@ -2,8 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
        <!-- 加载配置属性文件 -->
        <context:property-placeholder ignore-unresolvable="true" location="classpath:config.properties" />
@@ -46,6 +48,28 @@
               <!-- 配置监控统计拦截的filters -->
               <property name="filters" value="stat" />
        </bean>
+
+       <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+              <!--配置Datasource-->
+              <property name="dataSource" ref="dataSource" />
+              <!--&lt;!&ndash;设置Mybatis中Entity别名的包路径&ndash;&gt;-->
+              <!--<property name="typeAliasesPackage" value="com.cennac.ccsite"/>-->
+              <!--&lt;!&ndash;通过Mybatis中Entity的父类，扫描设置Entity的别名&ndash;&gt;-->
+              <!--<property name="typeAliasesSuperType" value="com.cennac.ccsite.common.BaseEntity"/>-->
+              <!--&lt;!&ndash;Mybatis Mapper存放路径&ndash;&gt;-->
+              <!--<property name="mapperLocations" value="classpath*:/com/cennac/ccsite/**/mappings/*Dao.xml"/>-->
+              <!--&lt;!&ndash;Mybatis 配置文件路径&ndash;&gt;-->
+              <!--<property name="configLocation" value="classpath:/mybatis-config.xml"/>-->
+       </bean>
+
+       <!--定义事务-->
+       <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+              <property name="dataSource" ref="dataSource"/>
+       </bean>
+
+       <!--扫描@Transactional注解的类定义事务-->
+       <tx:annotation-driven transaction-manager="dataSourceTransactionManager" proxy-target-class="true"/>
+
 
 
 
